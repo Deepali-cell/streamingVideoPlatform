@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
     credentials: true,
   })
 );
@@ -31,6 +31,8 @@ app.use("/api/user", userRoute);
 app.use("/api/streaming", streamVideoRoute);
 app.use("/api/admin", adminRoute);
 
-app.listen(3000, () => {
-  console.log("server is working");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`server running on port ${PORT}`);
 });
