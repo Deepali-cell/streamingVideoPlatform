@@ -7,7 +7,7 @@ import SearchInput from "./SearchInput";
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { user, logout } = useAppContext();
+  const { user, logout, isUser } = useAppContext();
 
   return (
     <header className="sticky top-0 z-50 bg-neutral-900 relative">
@@ -36,7 +36,7 @@ const Navbar = () => {
               Upload
             </button>
           </Link>
-          {user ? (
+          {isUser ? (
             <>
               <Link to="/profile">
                 <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-700 hover:bg-neutral-800 transition">
@@ -93,7 +93,7 @@ const Navbar = () => {
                 Upload
               </button>
             </Link>
-            {user ? (
+            {isUser ? (
               <>
                 <Link to="/profile">
                   <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-neutral-700 hover:bg-neutral-800 text-white w-full">

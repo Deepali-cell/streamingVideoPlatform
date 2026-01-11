@@ -7,57 +7,41 @@ const AdminContextProvider = ({ children }) => {
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const [allUsers, setallUsers] = useState([]);
   const [allstreamingVideos, setallstreamingVideos] = useState([]);
+  const [adminLoaded, setAdminLoaded] = useState(false); // ⭐ important
 
-  const fetchallstreamingVideos = async () => {
+  const fetchAdminData = async () => {
+    if (adminLoaded) return; // ⛔ prevent re-fetch
+
     try {
-      const { data } = await axios.get(
-        `${backend_url}/api/admin/allstreamingvideos`,
-        { withCredentials: true }
-      );
+      const [usersRes, videosRes] = await Promise.all([
+        axios.get(`${backend_url}/api/admin/allusers`, {
+          withCredentials: true,
+        }),
+        axios.get(`${backend_url}/api/admin/allstreamingvideos`, {
+          withCredentials: true,
+        }),
+      ]);
 
-      if (data.success) {
-        setallstreamingVideos(data.streamVideos);
-      }
+      if (usersRes.data.success) setallUsers(usersRes.data.users);
+      if (videosRes.data.success)
+        setallstreamingVideos(videosRes.data.streamVideos);
+
+      setAdminLoaded(true);
     } catch (error) {
-      console.log(
-        "frontend error while fetching public videos :",
-        error.response.data.message
-      );
+      console.log("Admin data fetch error");
     }
   };
-  const fetchallUsers = async () => {
-    try {
-      const { data } = await axios.get(`${backend_url}/api/admin/allusers`, {
-        withCredentials: true,
-      });
-      if (data.success) {
-        setallUsers(data.users);
-      }
-    } catch (error) {
-      console.log(
-        "error while fetching the users : ",
-        error.response.data.message
-      );
-    }
-  };
-  useEffect(() => {
-    fetchallUsers();
-  }, []);
 
-  useEffect(() => {
-    fetchallstreamingVideos();
-  }, []);
-
-  const value = {
-    allUsers,
-    setallUsers,
-    allstreamingVideos,
-    setallstreamingVideos,
-    fetchallstreamingVideos,
-    fetchallUsers,
-  };
   return (
-    <AdminContext.Provider value={value}>{children}</AdminContext.Provider>
+    <AdminContext.Provider
+      value={{
+        allUsers,
+        allstreamingVideos,
+        fetchAdminData,
+      }}
+    >
+      {children}
+    </AdminContext.Provider>
   );
 };
 

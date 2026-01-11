@@ -8,12 +8,7 @@ import { useAdminContext } from "@/context/AdminContext";
 const ProfileP = () => {
   const { user, editorStreamVideos, fetchEditorStreamingVideos } =
     useAppContext();
-  const {
-    allUsers,
-    allstreamingVideos,
-    fetchallstreamingVideos,
-    fetchallUsers,
-  } = useAdminContext();
+  const { allUsers, allstreamingVideos, fetchAdminData } = useAdminContext();
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -27,11 +22,9 @@ const ProfileP = () => {
   }, [user]);
 
   useEffect(() => {
-    fetchallUsers();
-  }, [user]);
-
-  useEffect(() => {
-    fetchallstreamingVideos();
+    if (user?.role === "admin") {
+      fetchAdminData();
+    }
   }, [user]);
 
   if (!user) return null;
