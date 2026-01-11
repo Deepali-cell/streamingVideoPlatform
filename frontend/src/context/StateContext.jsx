@@ -10,15 +10,18 @@ const StateContextProvider = ({ children }) => {
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const [user, setUser] = useState();
   const [isUser, setisUser] = useState(
-    localStorage.getItem("videoplatformuser")
+    localStorage.getItem("videoplatformuser") === "true"
   );
+
   const [publicVideos, setpublicVideos] = useState([]);
   const [editorStreamVideos, seteditorStreamVideos] = useState([]);
   const [loadingPublicVideos, setLoadingPublicVideos] = useState(false);
   const [loadingEditorVideos, setLoadingEditorVideos] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
 
   const fetchUser = async () => {
     try {
+      setAuthLoading(true);
       const { data } = await axios.get(`${backend_url}/api/user/getuser`, {
         withCredentials: true,
       });
@@ -36,6 +39,8 @@ const StateContextProvider = ({ children }) => {
       setUser(null);
       setisUser(false);
       localStorage.removeItem("videoplatformuser");
+    } finally {
+      setAuthLoading(false);
     }
   };
 
@@ -124,6 +129,8 @@ const StateContextProvider = ({ children }) => {
     loadingPublicVideos,
     setLoadingEditorVideos,
     setLoadingPublicVideos,
+    authLoading,
+    setAuthLoading,
   };
   return (
     <StateContext.Provider value={value}>{children}</StateContext.Provider>

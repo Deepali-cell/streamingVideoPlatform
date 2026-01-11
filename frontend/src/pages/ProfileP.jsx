@@ -6,7 +6,7 @@ import AdminTabs from "@/components/AdminTabs";
 import { useAdminContext } from "@/context/AdminContext";
 
 const ProfileP = () => {
-  const { user, editorStreamVideos, fetchEditorStreamingVideos } =
+  const { user, editorStreamVideos, fetchEditorStreamingVideos, authLoading } =
     useAppContext();
   const { allUsers, allstreamingVideos, fetchAdminData } = useAdminContext();
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -27,7 +27,9 @@ const ProfileP = () => {
     }
   }, [user]);
 
+  if (authLoading) return <p>Loading...</p>;
   if (!user) return null;
+
   return (
     <div className="min-h-screen bg-neutral-950 px-10 py-8 text-white">
       <div

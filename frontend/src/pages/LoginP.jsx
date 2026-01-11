@@ -12,7 +12,7 @@ import axios from "axios";
 import { useAppContext } from "@/context/StateContext";
 
 const LoginP = () => {
-  const { backend_url, navigate, setisUser } = useAppContext();
+  const { backend_url, navigate, setisUser, fetchUser } = useAppContext();
 
   const [userData, setuserData] = useState({
     name: "",
@@ -55,10 +55,11 @@ const LoginP = () => {
         }
       );
       if (data.success) {
-        navigate("/");
         setisUser(true);
         localStorage.setItem("videoplatformuser", "true");
-        toast(data.message || "You are login Successfully");
+        await fetchUser();
+        navigate("/");
+        toast(data.message || "Login successful");
       } else {
         toast(data.message || "some error while login");
       }
