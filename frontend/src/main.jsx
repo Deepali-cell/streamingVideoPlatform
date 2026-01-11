@@ -4,7 +4,6 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "sonner";
-import StateContextProvider from "./context/stateContext";
 import AppProviders from "./Providers/AppProviders";
 
 createRoot(document.getElementById("root")).render(
