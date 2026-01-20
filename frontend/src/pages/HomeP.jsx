@@ -3,11 +3,12 @@ import { Radio } from "lucide-react";
 import SkeletonCard from "@/components/SkeletonCard";
 import VideoGrid from "@/components/VideoGrid";
 import VideoPlayerDialog from "@/components/VideoPlayerDialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmptyState from "@/components/EmptyState";
 
 const HomeP = () => {
-  const { publicVideos, loadingPublicVideos } = useAppContext();
+  const { publicVideos, loadingPublicVideos, fetchStreamingVideos } =
+    useAppContext();
 
   const [open, setOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -16,7 +17,9 @@ const HomeP = () => {
     setSelectedVideo(video);
     setOpen(true);
   };
-
+  useEffect(() => {
+    fetchStreamingVideos();
+  }, []);
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#1a1a1a,_#000)] px-10 py-12">
       <div className="flex items-center gap-3 mb-10">

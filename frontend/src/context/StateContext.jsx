@@ -104,9 +104,6 @@ const StateContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchStreamingVideos();
-  }, []);
-  useEffect(() => {
     fetchUser();
   }, []);
 
