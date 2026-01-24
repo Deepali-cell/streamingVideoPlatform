@@ -99,7 +99,9 @@ const allPublicStreamVideos = async (req, res) => {
 
     // ❄️ fresh fetch
     const streamVideos = await StreamVideo.find({ visibility: "public" })
-      .select("title thumbnail videoUrl owner createdAt")
+      .select(
+        "title thumbnail description category tags videoUrl owner createdAt",
+      )
       .populate("owner", "name")
       .sort({ createdAt: -1 })
       .limit(20);
