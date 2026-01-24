@@ -48,8 +48,10 @@ const streamVideoSchema = new mongoose.Schema(
       default: "public",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
+
+streamVideoSchema.index({ visibility: 1, createdAt: -1 });
 
 /* 🔍 Full text search */
 streamVideoSchema.index({

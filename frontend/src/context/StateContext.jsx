@@ -10,7 +10,7 @@ const StateContextProvider = ({ children }) => {
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const [user, setUser] = useState();
   const [isUser, setisUser] = useState(
-    localStorage.getItem("videoplatformuser") === "true"
+    localStorage.getItem("videoplatformuser") === "true",
   );
 
   const [publicVideos, setpublicVideos] = useState([]);
@@ -51,7 +51,7 @@ const StateContextProvider = ({ children }) => {
         {},
         {
           withCredentials: true,
-        }
+        },
       );
       if (data.success) {
         setUser(null);
@@ -67,18 +67,17 @@ const StateContextProvider = ({ children }) => {
     }
   };
   const fetchStreamingVideos = async () => {
+    if (publicVideos.length > 0) return; // 🔥 cache guard
+
     try {
       setLoadingPublicVideos(true);
-
       const { data } = await axios.get(
-        `${backend_url}/api/streaming/getpublicstreamvideos`
+        `${backend_url}/api/streaming/getpublicstreamvideos`,
       );
 
       if (data.success) {
         setpublicVideos(data.streamVideos);
       }
-    } catch (error) {
-      console.log("frontend error while fetching public videos");
     } finally {
       setLoadingPublicVideos(false);
     }
@@ -90,7 +89,7 @@ const StateContextProvider = ({ children }) => {
 
       const { data } = await axios.get(
         `${backend_url}/api/streaming/getmystreamvideos`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (data.success) {

@@ -19,7 +19,8 @@ const HomeP = () => {
   };
   useEffect(() => {
     fetchStreamingVideos();
-  }, []);
+  }, [fetchStreamingVideos]);
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#1a1a1a,_#000)] px-10 py-12">
       <div className="flex items-center gap-3 mb-10">

@@ -1,6 +1,13 @@
 import StreamVideo from "../models/streamVideoModel.js";
 import User from "../models/userModel.js";
 
+let publicVideosCache = {
+  data: null,
+  lastFetched: 0,
+};
+
+const CACHE_TIME = 60 * 1000; // 1 minute
+
 const streamVideo = async (req, res) => {
   try {
     const userId = req.userId;
@@ -76,29 +83,39 @@ const streamVideo = async (req, res) => {
 
 const allPublicStreamVideos = async (req, res) => {
   try {
-    const streamVideos = await StreamVideo.find({ visibility: "public" })
-      .populate("owner", "name videosCount")
-      .sort({ createdAt: -1 });
+    const now = Date.now();
 
-    if (!streamVideos.length) {
-      return res.status(404).json({
-        success: false,
-        message: "No public streaming videos found",
+    // 🔥 cache hit
+    if (
+      publicVideosCache.data &&
+      now - publicVideosCache.lastFetched < CACHE_TIME
+    ) {
+      return res.status(200).json({
+        success: true,
+        streamVideos: publicVideosCache.data,
+        cached: true,
       });
     }
 
+    // ❄️ fresh fetch
+    const streamVideos = await StreamVideo.find({ visibility: "public" })
+      .select("title thumbnail videoUrl owner createdAt")
+      .populate("owner", "name")
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    publicVideosCache = {
+      data: streamVideos,
+      lastFetched: now,
+    };
+
     return res.status(200).json({
       success: true,
-      message: "Public streaming videos fetched successfully",
       streamVideos,
+      cached: false,
     });
   } catch (error) {
-    console.error("Fetch public videos error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Error while fetching public streaming videos",
-    });
+    return res.status(500).json({ success: false });
   }
 };
 
@@ -222,7 +239,7 @@ const updateVideo = async (req, res) => {
         category,
         tags: normalizedTags,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedVideo) {
@@ -270,7 +287,7 @@ export const searchVideos = async (req, res) => {
       },
       {
         score: { $meta: "textScore" },
-      }
+      },
     ).sort({ score: { $meta: "textScore" } });
 
     if (!videos.length) {
